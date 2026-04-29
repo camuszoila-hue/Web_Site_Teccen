@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Video Hub Premium</title>
+    <style>
+        /* Fondo con degradado colorido */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); 
+            color: white; 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 30px; 
+            justify-content: center; 
+            padding: 40px;
+            margin: 0;
+        }
+
+        /* Tarjetas más coloridas y con sombra */
+        .video-card { 
+            background: #0f3460; 
+            padding: 20px; 
+            border-radius: 15px; 
+            width: 350px; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5), 0 0 15px rgba(0, 123, 255, 0.2);
+            border: 1px solid #16213e;
+            transition: transform 0.3s ease;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+            border-color: #e94560; /* Brillo al pasar el mouse */
+        }
+
+        /* ESTO CORRIGE EL TAMAÑO: Forzamos el alto y ancho */
+        .video-container {
+            width: 100%;
+            height: 200px; /* Altura fija para que todos sean iguales */
+            background: black;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        video { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; /* Recorta el video para que llene el espacio sin deformarse */
+        }
+
+        /* Lista de comentarios más estética */
+        .comment-list { 
+            height: 120px; 
+            overflow-y: auto; 
+            background: rgba(255, 255, 255, 0.05); 
+            margin: 15px 0; 
+            padding: 10px; 
+            font-size: 0.9em;
+            border-radius: 8px;
+            border-left: 3px solid #e94560;
+        }
+
+        .comment-item { 
+            background: rgba(255, 255, 255, 0.1);
+            margin-bottom: 8px;
+            padding: 8px; 
+            border-radius: 5px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Inputs y botones coloridos */
+        .input-group { display: flex; gap: 5px; }
+
+        input { 
+            flex-grow: 1;
+            padding: 10px; 
+            border-radius: 5px; 
+            border: none; 
+            background: #1a1a2e;
+            color: white;
+            outline: none;
+        }
+
+        button { 
+            cursor: pointer; 
+            background: #e94560; 
+            color: white; 
+            border: none; 
+            padding: 10px 15px; 
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        button:hover { background: #ff2e63; }
+
+        /* Estilo del scrollbar */
+        .comment-list::-webkit-scrollbar { width: 5px; }
+        .comment-list::-webkit-scrollbar-thumb { background: #e94560; border-radius: 10px; }
+    </style>
+</head>
+<div class="video-card" style="width: 100%; max-width: 730px; margin-top: 40px; border-color: #00d1ff;">
+    <h3 style="text-align: center; color: #00d1ff;">🚀 ¿Quieres contratarme?</h3>
+    <p style="text-align: center; font-size: 0.9em;">Deja tus datos y me pondré en contacto contigo.</p>
+    
+    <form id="hireForm" style="display: flex; flex-direction: column; gap: 15px;">
+        <input type="text" id="hireName" placeholder="Tu Nombre Completo" required style="background: #16213e;">
+        <input type="email" id="hireEmail" placeholder="Tu Correo Electrónico" required style="background: #16213e;">
+        <textarea id="hireProject" placeholder="Cuéntame sobre tu proyecto..." style="background: #16213e; color: white; border-radius: 5px; padding: 10px; border: none; height: 80px; font-family: sans-serif;"></textarea>
+        <button type="button" onclick="registerHire()" style="background: #00d1ff;">Enviar Solicitud</button>
+    </form>
+    <div id="hireStatus" style="margin-top: 10px; text-align: center; font-size: 0.8em; color: #00ff88;"></div>
+</div>
+
+<script>
+    function registerHire() {
+        const name = document.getElementById('hireName').value;
+        const email = document.getElementById('hireEmail').value;
+        const project = document.getElementById('hireProject').value;
+
+        if(!name || !email) return alert("Por favor, llena los campos básicos.");
+
+        // Guardamos el registro
+        const registration = { name, email, project, date: new Date().toLocaleString() };
+        let hires = JSON.parse(localStorage.getItem('registros_contratacion')) || [];
+        hires.push(registration);
+        localStorage.setItem('registros_contratacion', JSON.stringify(hires));
+
+        // Feedback visual
+        document.getElementById('hireForm').reset();
+        document.getElementById('hireStatus').innerText = "✅ ¡Datos registrados! (Guardados en memoria local)";
+    }
+</script>
+<body>
+
+    <div class="video-card">
+        <div class="video-container">
+            <video src="Agent_video_Pippit_20260430005159.mp4" controls></video>
+        </div>
+        <div id="list-1" class="comment-list"></div>
+        <div class="input-group">
+            <input type="text" id="input-1" placeholder="¿Qué opinas?">
+            <button onclick="saveComment(1)">Enviar</button>
+        </div>
+    </div>
+
+    <div class="video-card">
+        <div class="video-container">
+            <video src="Agent_video_Pippit_20260430013741.mp4" controls></video>
+        </div>
+        <div id="list-2" class="comment-list"></div>
+        <div class="input-group">
+            <input type="text" id="input-2" placeholder="¿Qué opinas?">
+            <button onclick="saveComment(2)">Enviar</button>
+        </div>
+    </div>
+
+    <div class="video-card">
+        <div class="video-container">
+            <video src="video_1_1777483848616.mp4" controls></video>
+        </div>
+        <div id="list-3" class="comment-list"></div>
+        <div class="input-group">
+            <input type="text" id="input-3" placeholder="¿Qué opinas?">
+            <button onclick="saveComment(3)">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        window.onload = () => {
+            [1, 2, 3].forEach(id => displayComments(id));
+        };
+
+        function saveComment(id) {
+            const text = document.getElementById(`input-${id}`).value;
+            if (!text.trim()) return;
+
+            let comments = JSON.parse(localStorage.getItem(`video-${id}`)) || [];
+            comments.push(text);
+            localStorage.setItem(`video-${id}`, JSON.stringify(comments));
+            
+            document.getElementById(`input-${id}`).value = "";
+            displayComments(id);
+        }
+
+        function displayComments(id) {
+            const listDiv = document.getElementById(`list-${id}`);
+            let comments = JSON.parse(localStorage.getItem(`video-${id}`)) || [];
+            listDiv.innerHTML = comments.map(c => `<div class="comment-item">${c}</div>`).reverse().join('');
+
+        }
+
+        
+    </script>
+</body>
+</html>
